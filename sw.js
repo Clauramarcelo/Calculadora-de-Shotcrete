@@ -1,6 +1,6 @@
 
 // Service Worker para Shotcrete Calc (cache-first + actualización en segundo plano)
-const CACHE_NAME = 'shotcrete-cache-v3';
+const CACHE_NAME = 'shotcrete-cache-v3'; // <-- incrementa (v2, v3, ...) por release
 const ASSETS = [
   './',
   './index.html',
@@ -10,14 +10,19 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Activación inmediata del nuevo SW (opcional)
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : null))
-    )
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : null));
+      // Tomar control de todas las páginas abiertas (opcional)
+      self.clients.claim();
+    })()
   );
 });
 
