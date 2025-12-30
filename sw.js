@@ -1,6 +1,7 @@
 
 // Service Worker para Shotcrete Calc (cache-first + actualización en segundo plano)
-const CACHE_NAME = 'shotcrete-cache-v3'; // <-- incrementa (v2, v3, ...) por release
+const CACHE_NAME = 'shotcrete-cache-v3
+  4'; // <-- incrementa (v2, v3, ...) por release
 const ASSETS = [
   './',
   './index.html',
