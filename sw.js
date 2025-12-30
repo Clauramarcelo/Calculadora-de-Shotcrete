@@ -1,25 +1,23 @@
 
-// Service Worker for Shotcrete Calc
-const CACHE_NAME = 'shotcrete-cache-v2';
+// Service Worker para Shotcrete Calc (cache-first + actualización en segundo plano)
+const CACHE_NAME = 'shotcrete-cache-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => {
-      if (k !== CACHE_NAME) return caches.delete(k);
-    })))
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : null))
+    )
   );
 });
 
@@ -31,9 +29,9 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(()=>{});
         return response;
       }).catch(() => {
-        // Offline fallback para navegaciones
+        // Fallback offline para navegaciones
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       });
     })
