@@ -6,131 +6,230 @@
   <title>Shotcrete Calc – Cálculo Rápido, Registro y Resumen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
+  <!-- PWA (GitHub Pages: usar rutas relativas) -->
+  ./manifest.json
   <meta name="theme-color" content="#f97316">
 
   <style>
     :root{
-      --bg:#0b0b0b; --panel:#141414; --border:#1f1f1f; --text:#e6e7ea; --text2:#b9bdc5; --muted:#9ca3af;
-      --accent:#f97316; --accent2:#ffb020; --accent3:#fb923c; --danger:#ef4444; --banner-bg:#1a1208;
+      /* Paleta: plomo (80%), negro y acento naranja */
+      --bg:#2b2f36;          /* fondo plomo ~80% */
+      --panel:#1e2127;       /* panel gris oscuro */
+      --panel-contrast:#242730; /* contraste discreto */
+      --border:#343a40;      /* borde gris */
+      --text:#eceff3;        /* texto principal claro */
+      --text2:#cbd2da;       /* texto secundario */
+      --muted:#9aa3ad;       /* notas suaves */
+      --accent:#f97316;      /* naranja */
+      --accent-600:#ea580c;  /* hover naranja */
+      --danger:#ef4444;      /* rojo suave */
+      --banner:#252a32;      /* fondo banner */
     }
-    /* Tipografía responsiva */
+
+    /* Tipografía responsiva y legible */
     html{ font-size: clamp(12px, 1.6vw, 15px); }
-    body{ margin:0; padding:0; background:var(--bg); color:var(--text); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    body{
+      margin:0; padding:0; background:var(--bg); color:var(--text);
+      font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    /* Contenedor */
+    /* Layout */
     .wrap{ max-width:1100px; margin:24px auto; padding:0 16px }
-
-    /* Titulares */
-    h1{ font-size:clamp(1rem, 2.6vw, 1.4rem); margin:0 0 8px; color:var(--accent2) }
-    h2{ font-size:clamp(0.95rem, 2vw, 1.2rem); color:var(--accent3); }
-    h3{ font-size:clamp(0.9rem, 1.8vw, 1.05rem); color:#ced5df; }
-
-    .subtitle{ color:var(--muted); margin-bottom:18px }
+    h1{ font-size:clamp(1rem, 2.6vw, 1.4rem); margin:0 0 8px; color:#fff }
+    h2{ font-size:clamp(0.95rem, 2vw, 1.2rem); color:#fff; }
+    h3{ font-size:clamp(0.9rem, 1.8vw, 1.05rem); color:#eceff3; }
+    .subtitle{ color:var(--text2); margin-bottom:18px }
 
     /* Tabs */
-    .tabs{ display:flex; gap:8px; margin:16px 0; flex-wrap:wrap }
-    .tab-btn{ background:var(--panel); color:var(--text); border:1px solid var(--border); padding:clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 14px); border-radius:10px; cursor:pointer }
-    .tab-btn.active{ background:linear-gradient(135deg, #1b1b1b, #111); border-color:var(--accent); box-shadow:0 0 0 2px rgba(249,115,22,0.35) inset; }
+    .tabs{ display:flex; gap:10px; margin:16px 0; flex-wrap:wrap }
+    .tab-btn{
+      background:var(--panel-contrast); color:var(--text); border:1px solid var(--border);
+      padding:clamp(8px, 1.5vw, 10px) clamp(12px, 2.2vw, 16px);
+      border-radius:10px; cursor:pointer; transition:all .12s ease
+    }
+    .tab-btn:hover{ border-color:var(--accent); }
+    .tab-btn.active{
+      background:var(--panel); border-color:var(--accent);
+      box-shadow:0 0 0 2px rgba(249,115,22,0.2) inset;
+    }
 
-    /* Panel y Grilla */
+    /* Panel y grilla */
     .panel{ background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:clamp(12px, 2vw, 16px) }
     .grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:12px }
-    .col-2{grid-column:span 2} .col-3{grid-column:span 3} .col-4{grid-column:span 4} .col-6{grid-column:span 6} .col-8{grid-column:span 8} .col-12{grid-column:span 12}
+    .col-2{grid-column:span 2} .col-3{grid-column:span 3} .col-4{grid-column:span 4}
+    .col-6{grid-column:span 6} .col-8{grid-column:span 8} .col-12{grid-column:span 12}
 
     /* Inputs */
-    label{ display:block; font-size:0.9em; color:var(--text2); margin-bottom:6px }
-    input, select{ width:100%; padding:clamp(8px, 1.6vw, 10px); border:1px solid var(--border); border-radius:10px; background:#0d0d0d; color:var(--text) }
-    input[readonly]{ background:#111b1f; color:#cfe4ff }
+    label{ display:block; font-size:0.95em; color:var(--text2); margin-bottom:6px }
+    input, select{
+      width:100%; padding:clamp(10px, 1.6vw, 12px);
+      border:1px solid var(--border); border-radius:10px;
+      background:#1a1d23; color:var(--text);
+    }
+    input[readonly]{ background:#1d2027; color:#dbe9f6 }
     input:focus, select:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(249,115,22,0.25) }
 
+    /* Botones */
     .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
-    .btn{ cursor:pointer; padding:clamp(8px, 1.6vw, 10px) clamp(10px, 2vw, 14px); border-radius:10px; border:1px solid var(--border); background:#111; color:#e7edf7; transition:all .15s ease }
-    .btn:hover{ border-color:var(--accent); color:#fff }
-    .btn.primary{ background:#1a1208; border-color:#2a1b0d; color:#ffd8ab }
-    .btn.primary:hover{ background:#22150a }
-    .btn.sky{ background:#141414; border-color:var(--accent); color:#ffd7b3 }
-    .btn.danger{ background:#1b0c0e; border-color:#7f1d1d; color:#fca5a5 }
+    .btn{
+      cursor:pointer; padding:clamp(10px, 1.6vw, 12px) clamp(12px, 2vw, 16px);
+      border-radius:10px; border:1px solid var(--border);
+      background:#22262d; color:#fff; transition:all .15s ease
+    }
+    .btn:hover{ border-color:var(--accent); }
+    .btn.primary{ background:var(--accent); border-color:var(--accent); color:#141414 }
+    .btn.primary:hover{ background:var(--accent-600); border-color:var(--accent-600) }
+    .btn.ghost{ background:transparent; }
 
-    /* Banner / KPIs */
-    .banner{ margin-top:14px; padding:12px; border:1px solid var(--accent); border-radius:12px; background:var(--banner-bg); color:#ffd7b3 }
-    .out{ background:#0d0d0d; border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:10px }
+    /* Banner y KPIs */
+    .banner{
+      margin-top:10px; padding:12px; border:1px solid var(--border); border-radius:12px;
+      background:var(--banner); color:var(--text)
+    }
     .kpi{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px }
-    .kpi .box{ background:#111; border:1px solid var(--border); border-radius:12px; padding:12px }
-    .kpi .box h3{ margin:0 0 6px; font-size:0.95em; color:#ced5df }
+    .kpi .box{
+      background:#22262d; border:1px solid var(--border);
+      border-radius:12px; padding:12px
+    }
+    .kpi .box h3{ margin:0 0 6px; font-size:0.95em; color:#dfe4ea }
 
     /* TOTAL m³ grande */
-    .total-big{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding:10px 12px; border-radius:14px; border:1px solid var(--accent); background:#120f0a; }
+    .total-big{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top:12px; padding:12px 14px; border-radius:14px;
+      border:1px solid var(--accent); background:#242730;
+    }
     .total-big .label{ color:#ffd8ab; font-size:clamp(1rem, 2.2vw, 1.3rem); }
-    .total-big .value{ color:#fff; font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(1.4rem, 6vw, 2.4rem); letter-spacing:.5px; }
+    .total-big .value{
+      color:#fff; font-weight:700; font-variant-numeric:tabular-nums;
+      font-size:clamp(1.6rem, 6vw, 2.6rem); letter-spacing:.5px;
+    }
 
     /* Tabla */
     table{ width:100%; border-collapse:collapse; margin-top:10px }
-    th,td{ border:1px solid var(--border); padding:8px; text-align:left }
-    th{ background:#111; color:#eaeef7 }
-    tfoot td{ font-weight:600; background:#0f0f0f }
+    th,td{ border:1px solid var(--border); padding:10px; text-align:left }
+    th{ background:#22262d; color:#eaeef7 }
+    tfoot td{ font-weight:600; background:#23262c }
 
+    /* Etiquetas sutiles */
     .note{ font-size:0.85em; color:var(--muted) }
     .switch{ display:flex; align-items:center; gap:8px; margin-top:8px }
-    .resanes{ margin-top:12px }
-    .res-row{ display:grid; grid-template-columns:repeat(12,1fr); gap:8px; margin-bottom:8px }
+    .resanes{ margin-top:6px }
+    .res-row{ display:grid; grid-template-columns:repeat(12,1fr); gap:8px; margin-bottom:6px }
     .res-actions{ display:flex; gap:8px; flex-wrap:wrap }
-    .hint{ font-size:0.85em; color:#ffd7b3; margin-top:6px }
 
-    /* Responsivo */
+    /* ---------- Inputs compactos para móvil ---------- */
     @media (max-width: 900px){ .grid{ grid-template-columns:repeat(8,1fr) } .kpi{ grid-template-columns:repeat(2,1fr) } }
-    @media (max-width: 640px){ .grid{ grid-template-columns:repeat(4,1fr) } .col-2,.col-3,.col-4,.col-6,.col-8,.col-12{ grid-column:span 4 } .tabs{ gap:6px } .wrap{ padding:0 12px } .kpi{ grid-template-columns:1fr } table th, table td{ font-size:0.9em } }
+    @media (max-width: 640px){
+      .grid{ grid-template-columns:repeat(4,1fr) }
+      .col-2,.col-3,.col-4,.col-6,.col-8,.col-12{ grid-column:span 4 }
+      .wrap{ padding:0 12px }
+      .kpi{ grid-template-columns:1fr }
+      table th, table td{ font-size:0.9em }
+
+      /* Cajetines compactos: menos padding y ancho visual acotado */
+      input[type="number"],
+      input[type="text"],
+      select{
+        padding: 8px 10px;
+        max-width: 160px;   /* cómodo para x.xx */
+      }
+      .res-row > div input,
+      .res-row > div select{
+        max-width: 140px;
+      }
+      .btn{ padding: 8px 12px; }
+    }
+    @media (max-width: 360px){
+      input[type="number"],
+      input[type="text"],
+      select{
+        max-width: 130px;   /* aún más compacto */
+        padding: 7px 10px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Shotcrete Calc</h1>
-    <div class="subtitle">Cálculo rápido, registro y resumen. Resanes con fórmula (L × H) / 11.5 sin factor.</div>
+    <div class="subtitle">Calculadora de m³, registro y resumen — interfaz amigable y clara.</div>
 
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" data-tab="calc">1) Cálculo rápido</button>
-      <button class="tab-btn" data-tab="reg">2) Registro</button>
-      <button class="tab-btn" data-tab="sum">3) Resumen</button>
+      <button class="tab-btn active" data-tab="calc">Cálculo rápido</button>
+      <button class="tab-btn" data-tab="reg">Registro</button>
+      <button class="tab-btn" data-tab="sum">Resumen</button>
     </div>
 
     <!-- Panel: Cálculo rápido -->
     <div class="panel" id="tab-calc">
       <div class="grid">
-        <div class="col-12"><h2 style="margin:0 0 8px">A) Túnel</h2><div class="note">Fórmula: ((((2 × H) + A) × k) × L) / R</div></div>
-        <div class="col-3"><label>Ancho A (m)</label><input type="number" step="0.01" id="A_t" placeholder="ej. 5.6" /></div>
-        <div class="col-3"><label>Altura H (m)</label><input type="number" step="0.01" id="H_t" placeholder="ej. 4.78" /></div>
-        <div class="col-3"><label>Largo L (m)</label><input type="number" step="0.01" id="L_t" placeholder="ej. 10" /></div>
-        <div class="col-3"><label>Factor k (≈0.9)</label><input type="number" step="0.01" id="k_t" value="0.9" /></div>
-        <div class="col-3"><label>Rendimiento R</label><input type="number" step="0.01" id="R_t" value="11.5" /></div>
-        <div class="col-12 hint">m³_arco = ((((2 × H) + A) × k) × L) / R</div>
-
-        <div class="col-12" style="margin-top:6px"><h2 style="margin:0 0 8px">B) Frente de sacrificio (FS)</h2><div class="switch"><input type="checkbox" id="fs_on" checked /><span class="note">Usa A y H de A) automáticamente (copiados abajo)</span></div></div>
-        <div class="col-3"><label>Ancho A (copiado de A)</label><input type="number" id="A_fs_view" readonly /></div>
-        <div class="col-3"><label>Altura H (copiado de A)</label><input type="number" id="H_fs_view" readonly /></div>
-        <div class="col-3"><label>Rendimiento R_fs</label><input type="number" step="0.01" id="R_fs" value="15.4" /></div>
-        <div class="col-3"><label>Factor f_fs</label><input type="number" step="0.01" id="f_fs" value="0.8" /></div>
-        <div class="col-12 hint">m³_fs = ((H × A) / R_fs) × f_fs  &nbsp; <span class="note">(A y H tomados de A y mostrados arriba)</span></div>
-
-        <div class="col-12 resanes">
-          <h2 style="margin:0 0 8px">C) Resanes (irregulares: hastiales / corona)</h2>
-          <div id="res_list"></div>
-          <div class="res-actions">
-            <button class="btn sky" id="add_res">+ Agregar resane</button>
-            <button class="btn" id="clear_res">Limpiar resanes</button>
-          </div>
-          <div class="note" style="margin-top:6px">Fórmula de resane: (L × H) / 11.5. No se aplica factor.</div>
+        <div class="col-12"><h2>Datos del túnel</h2></div>
+        <div class="col-3">
+          <label>Ancho A (m)</label>
+          <input type="number" step="0.01" id="A_t"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-3">
+          <label>Altura H (m)</label>
+          <input type="number" step="0.01" id="H_t"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-3">
+          <label>Largo L (m)</label>
+          <input type="number" step="0.01" id="L_t"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-3">
+          <label>Factor k</label>
+          <input type="number" step="0.01" id="k_t" value="0.9"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="4" />
+        </div>
+        <div class="col-3">
+          <label>Rendimiento R</label>
+          <input type="number" step="0.01" id="R_t" value="11.5"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
         </div>
 
-        <div class="col-12 row" style="margin-top:8px">
+        <div class="col-12" style="margin-top:4px"><h2>Frente de sacrificio (FS)</h2></div>
+        <div class="col-12 switch"><input type="checkbox" id="fs_on" checked /><span class="note">Activar FS</span></div>
+        <div class="col-3">
+          <label>Ancho A (copiado)</label>
+          <input type="number" id="A_fs_view" readonly />
+        </div>
+        <div class="col-3">
+          <label>Altura H (copiado)</label>
+          <input type="number" id="H_fs_view" readonly />
+        </div>
+        <div class="col-3">
+          <label>Rendimiento R_fs</label>
+          <input type="number" step="0.01" id="R_fs" value="15.4"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-3">
+          <label>Factor f_fs</label>
+          <input type="number" step="0.01" id="f_fs" value="0.8"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="4" />
+        </div>
+
+        <div class="col-12 resanes">
+          <h2>Resanes (HD / HI / Corona)</h2>
+          <div id="res_list"></div>
+          <div class="res-actions">
+            <button class="btn" id="add_res">Agregar resane</button>
+            <button class="btn ghost" id="clear_res">Limpiar resanes</button>
+          </div>
+          <div class="note">Cada resane usa sus propios L (m) y H (m). Se calcula: m³ = (L × H) / 11.5.</div>
+        </div>
+
+        <div class="col-12 row" style="margin-top:6px">
           <button class="btn primary" id="btn_calc_quick">Calcular</button>
-          <button class="btn" id="btn_clear_quick">Limpiar todo</button>
+          <button class="btn" id="btn_clear_quick">Limpiar</button>
         </div>
 
         <div class="col-12 banner" id="banner" style="display:none">
-          <strong>m³_arco + m³_fs + m³_resanes = m³_total</strong>
-          <div id="numbers" style="margin-top:6px;font-size:0.95rem">—</div>
+          <div id="numbers">—</div>
         </div>
 
         <!-- TOTAL GRANDE -->
@@ -140,148 +239,208 @@
         </div>
 
         <div class="col-12 kpi" id="kpi_quick" style="display:none">
-          <div class="box"><h3>m³_arco</h3><div id="kpi_arco">—</div></div>
-          <div class="box"><h3>m³_fs</h3><div id="kpi_fs">—</div></div>
-          <div class="box"><h3>m³_resanes</h3><div id="kpi_res">—</div></div>
-          <div class="box"><h3>m³_total</h3><div id="kpi_total">—</div></div>
+          <div class="box"><h3>m³ arco</h3><div id="kpi_arco">—</div></div>
+          <div class="box"><h3>m³ FS</h3><div id="kpi_fs">—</div></div>
+          <div class="box"><h3>m³ resanes</h3><div id="kpi_res">—</div></div>
+          <div class="box"><h3>m³ total</h3><div id="kpi_total">—</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Panel: Registro (misma calculadora + campos extra) -->
+    <!-- Panel: Registro -->
     <div class="panel" id="tab-reg" style="display:none">
       <div class="grid">
-        <div class="col-3"><label>Nivel</label><input type="text" id="nivel_r" placeholder="ej. 1200" /></div>
-        <div class="col-3"><label>Labor</label><input type="text" id="labor_r" placeholder="ej. Andaychagua - Subniv" /></div>
+        <div class="col-12"><h2>Registro operacional</h2></div>
+        <div class="col-3"><label>Nivel</label><input type="text" id="nivel_r" /></div>
+        <div class="col-3"><label>Labor</label><input type="text" id="labor_r" /></div>
         <div class="col-3"><label>Tipo de lanzado</label>
           <select id="tipo_r">
-            <option>OPE</option>
-            <option>REP</option>
-            <option>REO</option>
-            <option>NIC</option>
-            <option>REH</option>
+            <option>OPE</option><option>REP</option><option>REO</option><option>NIC</option><option>REH</option>
           </select>
         </div>
         <div class="col-3"><label>Fecha</label><input type="date" id="fecha_r" /></div>
 
         <div class="col-12"><h3>Túnel</h3></div>
-        <div class="col-3"><label>Ancho A (m)</label><input type="number" step="0.01" id="A_t_r" /></div>
-        <div class="col-3"><label>Altura H (m)</label><input type="number" step="0.01" id="H_t_r" /></div>
-        <div class="col-3"><label>Largo L (m)</label><input type="number" step="0.01" id="L_t_r" /></div>
-        <div class="col-3"><label>k</label><input type="number" step="0.01" id="k_t_r" value="0.9" /></div>
-        <div class="col-3"><label>R</label><input type="number" step="0.01" id="R_t_r" value="11.5" /></div>
+        <div class="col-3"><label>Ancho A (m)</label><input type="number" step="0.01" id="A_t_r"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" /></div>
+        <div class="col-3"><label>Altura H (m)</label><input type="number" step="0.01" id="H_t_r"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" /></div>
+        <div class="col-3"><label>Largo L (m)</label><input type="number" step="0.01" id="L_t_r"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" /></div>
+        <div class="col-3"><label>k</label><input type="number" step="0.01" id="k_t_r" value="0.9"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="4" /></div>
+        <div class="col-3"><label>R</label><input type="number" step="0.01" id="R_t_r" value="11.5"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" /></div>
 
         <div class="col-12"><h3>Frente de sacrificio</h3></div>
         <div class="col-3"><label>A (copiado)</label><input type="number" id="A_fs_view_r" readonly /></div>
         <div class="col-3"><label>H (copiado)</label><input type="number" id="H_fs_view_r" readonly /></div>
-        <div class="col-3"><label>R_fs</label><input type="number" step="0.01" id="R_fs_r" value="15.4" /></div>
-        <div class="col-3"><label>f_fs</label><input type="number" step="0.01" id="f_fs_r" value="0.8" /></div>
+        <div class="col-3"><label>R_fs</label><input type="number" step="0.01" id="R_fs_r" value="15.4"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" /></div>
+        <div class="col-3"><label>f_fs</label><input type="number" step="0.01" id="f_fs_r" value="0.8"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="4" /></div>
 
         <div class="col-12"><h3>Resanes</h3></div>
         <div class="col-12">
           <div id="res_list_r"></div>
           <div class="res-actions">
-            <button class="btn sky" id="add_res_r">+ Agregar resane</button>
-            <button class="btn" id="clear_res_r">Limpiar resanes</button>
+            <button class="btn" id="add_res_r">Agregar resane</button>
+            <button class="btn ghost" id="clear_res_r">Limpiar resanes</button>
           </div>
-          <div class="note" style="margin-top:6px">Fórmula: (L × H) / 11.5. Sin factor.</div>
+          <div class="note">m³ resane = (L × H) / 11.5 (sin factor).</div>
         </div>
 
-        <div class="col-12 row" style="margin-top:8px">
+        <div class="col-12 row" style="margin-top:6px">
           <button class="btn primary" id="btn_calc_reg">Calcular</button>
-          <button class="btn sky" id="btn_save_reg">Registrar</button>
-          <button class="btn" id="btn_clear_reg">Limpiar</button>
+          <button class="btn" id="btn_save_reg">Registrar</button>
+          <button class="btn ghost" id="btn_clear_reg">Limpiar</button>
         </div>
 
         <div class="col-12 kpi" id="kpi_reg" style="display:none">
-          <div class="box"><h3>m³_arco</h3><div id="kpi_arco_r">—</div></div>
-          <div class="box"><h3>m³_fs</h3><div id="kpi_fs_r">—</div></div>
-          <div class="box"><h3>m³_resanes</h3><div id="kpi_res_r">—</div></div>
-          <div class="box"><h3>m³_total</h3><div id="kpi_total_r">—</div></div>
+          <div class="box"><h3>m³ arco</h3><div id="kpi_arco_r">—</div></div>
+          <div class="box"><h3>m³ FS</h3><div id="kpi_fs_r">—</div></div>
+          <div class="box"><h3>m³ resanes</h3><div id="kpi_res_r">—</div></div>
+          <div class="box"><h3>m³ total</h3><div id="kpi_total_r">—</div></div>
         </div>
       </div>
     </div>
 
     <!-- Panel: Resumen -->
     <div class="panel" id="tab-sum" style="display:none">
-      <div class="row" style="margin-bottom:10px">
-        <button class="btn sky" id="btn_refresh">Actualizar</button>
-        <button class="btn" id="btn_export">Exportar CSV</button>
-      </div>
-      <div class="out">
-        <div class="note">Se muestran registros guardados (localStorage). *No hay opción de borrado para preservar el histórico.*</div>
-        <table id="tbl">
-          <thead>
-            <tr>
-              <th>FechaHora</th><th>Fecha</th><th>Nivel</th><th>Labor</th><th>Tipo</th>
-              <th>A</th><th>H</th><th>L</th><th>k</th><th>R</th>
-              <th>R_fs</th><th>f_fs</th>
-              <th>Resanes (n)</th>
-              <th>m³_arco</th><th>m³_fs</th><th>m³_resanes</th><th>m³_total</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="12">Totales</td>
-              <td id="sum_res">—</td>
-              <td id="sum_arco">—</td>
-              <td id="sum_fs">—</td>
-              <td id="sum_tot">—</td>
-            </tr>
-          </tfoot>
-        </table>
+      <div class="grid">
+        <div class="col-12"><h2>Resumen</h2></div>
+        <div class="col-12 row" style="margin-bottom:6px">
+          <button class="btn" id="btn_refresh">Actualizar</button>
+          <button class="btn ghost" id="btn_export">Exportar CSV</button>
+        </div>
+        <div class="col-12">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>FechaHora</th><th>Fecha</th><th>Nivel</th><th>Labor</th><th>Tipo</th>
+                <th>A</th><th>H</th><th>L</th><th>k</th><th>R</th>
+                <th>R_fs</th><th>f_fs</th>
+                <th>Resanes (n)</th>
+                <th>m³ arco</th><th>m³ FS</th><th>m³ resanes</th><th>m³ total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="12">Totales</td>
+                <td id="sum_res">—</td>
+                <td id="sum_arco">—</td>
+                <td id="sum_fs">—</td>
+                <td id="sum_tot">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const fmt = (x, d=3) => Number(x).toFixed(d);
-    const getNum = (id, def=0) => { const el = document.getElementById(id); if (!el) return def; const v = el.value; return v === "" || isNaN(Number(v)) ? def : Number(v); };
+    const getNum = (id, def=0) => { const el = document.getElementById(id); if (!el) return def; const v = el.value.replace(',', '.'); return v === "" || isNaN(Number(v)) ? def : Number(v); };
     const getStr = id => (document.getElementById(id)?.value || "").trim();
 
-    // Fórmulas
-    function calcArcoNuevo(A, H, L, k, R){ if (A<=0||H<=0||L<=0||R<=0||k<=0) return 0; return (((2*H)+A)*k*L)/R; }
-    function calcFS_AH_de_A(A, H, Rfs, ffs){ if (A<=0||H<=0||Rfs<=0||ffs<=0) return 0; return ((H*A)/Rfs)*ffs; }
-    function calcResanesSimple(rows){ let sum=0; rows.forEach(r=>{ const largo=Number(r.querySelector('.res-largo')?.value || 0); const alto=Number(r.querySelector('.res-alto')?.value || 0); if(largo>0 && alto>0){ sum += (largo*alto)/11.5; } }); return sum; }
+    /* Lógica de cálculo */
+    function calcArcoNuevo(A, H, L, k, R){
+      if (A<=0||H<=0||L<=0||R<=0||k<=0) return 0;
+      return (((2*H)+A)*k*L)/R;
+    }
+    function calcFS_AH_de_A(A, H, Rfs, ffs){
+      if (A<=0||H<=0||Rfs<=0||ffs<=0) return 0;
+      return ((H*A)/Rfs)*ffs;
+    }
+    function calcResanesSimple(rows){
+      let sum=0;
+      rows.forEach(r=>{
+        const largo=Number((r.querySelector('.res-largo')?.value || '0').replace(',', '.'));
+        const alto=Number((r.querySelector('.res-alto')?.value || '0').replace(',', '.'));
+        if(largo>0 && alto>0){ sum += (largo*alto)/11.5; }
+      });
+      return sum;
+    }
 
-    // Resanes UI
-    function addResaneRow(containerId){ const cont=document.getElementById(containerId); const row=document.createElement('div'); row.className='res-row'; row.innerHTML=`
-      <div class="col-2"><label>Lado</label><select class="res-lado"><option>Hastial derecho</option><option>Hastial izquierdo</option><option>Corona</option></select></div>
-      <div class="col-2"><label>Largo (m)</label><input type="number" step="0.01" class="res-largo" /></div>
-      <div class="col-2"><label>Alto H (m)</label><input type="number" step="0.01" class="res-alto" /></div>
-      <div class="col-1" style="display:flex;align-items:end"><button class="btn danger res-del">X</button></div>`; cont.appendChild(row); row.querySelector('.res-del').addEventListener('click', ()=>{ cont.removeChild(row); }); }
+    function addResaneRow(containerId){
+      const cont=document.getElementById(containerId);
+      const row=document.createElement('div');
+      row.className='res-row';
+      row.innerHTML=`
+        <div class="col-2"><label>Lado</label>
+          <select class="res-lado">
+            <option>Hastial derecho</option><option>Hastial izquierdo</option><option>Corona</option>
+          </select>
+        </div>
+        <div class="col-2"><label>Largo (m)</label>
+          <input type="number" step="0.01" class="res-largo"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-2"><label>Alto H (m)</label>
+          <input type="number" step="0.01" class="res-alto"
+                 inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" maxlength="5" />
+        </div>
+        <div class="col-1" style="display:flex;align-items:end">
+          <button class="btn" style="background:#2b1b1e;border-color:#7f1d1d;color:#fca5a5" type="button">X</button>
+        </div>`;
+      cont.appendChild(row);
+      row.querySelector('button').addEventListener('click', ()=>{ cont.removeChild(row); });
+    }
 
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click', ()=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const tab=btn.dataset.tab; document.getElementById('tab-calc').style.display=(tab==='calc'?'block':'none'); document.getElementById('tab-reg').style.display=(tab==='reg'?'block':'none'); document.getElementById('tab-sum').style.display=(tab==='sum'?'block':'none'); }); });
+    /* Tabs */
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab=btn.dataset.tab;
+        document.getElementById('tab-calc').style.display=(tab==='calc'?'block':'none');
+        document.getElementById('tab-reg').style.display=(tab==='reg'?'block':'none');
+        document.getElementById('tab-sum').style.display=(tab==='sum'?'block':'none');
+      });
+    });
 
-    // Copia A/H hacia FS (rápido)
-    function syncFSFromA(){ const A = getNum('A_t'); const H = getNum('H_t'); document.getElementById('A_fs_view').value = A>0 ? A : ''; document.getElementById('H_fs_view').value = H>0 ? H : ''; }
-    ['A_t','H_t'].forEach(id=>{ const el=document.getElementById(id); el.addEventListener('input', syncFSFromA); }); syncFSFromA();
+    /* Copia A/H a FS (rápido) */
+    function syncFSFromA(){
+      const A = getNum('A_t'); const H = getNum('H_t');
+      document.getElementById('A_fs_view').value = A>0 ? fmt(A,2) : '';
+      document.getElementById('H_fs_view').value = H>0 ? fmt(H,2) : '';
+    }
+    ['A_t','H_t'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.addEventListener('input', syncFSFromA);
+    }); syncFSFromA();
 
-    // Cálculo rápido
+    /* Cálculo rápido */
     document.getElementById('add_res').addEventListener('click', ()=> addResaneRow('res_list'));
     document.getElementById('clear_res').addEventListener('click', ()=>{ document.getElementById('res_list').innerHTML=''; });
 
     function computeQuick(){
       const A_t=getNum('A_t'), H_t=getNum('H_t'), L_t=getNum('L_t'), k_t=getNum('k_t',0.9), R_t=getNum('R_t',11.5);
       const m3_arco=calcArcoNuevo(A_t,H_t,L_t,k_t,R_t);
+
       const fs_on=document.getElementById('fs_on').checked, R_fs=getNum('R_fs',15.4), f_fs=getNum('f_fs',0.8);
       const m3_fs=fs_on?calcFS_AH_de_A(A_t,H_t,R_fs,f_fs):0;
+
       const resRows=Array.from(document.querySelectorAll('#res_list .res-row'));
       const m3_res=calcResanesSimple(resRows);
+
       const total=m3_arco+m3_fs+m3_res;
 
-      // Banner/KPI
+      /* Resumen compacto (sin fórmulas) */
       const banner=document.getElementById('banner'); const nums=document.getElementById('numbers');
-      banner.style.display='block'; nums.textContent=`m³_arco = ${fmt(m3_arco)} | m³_fs = ${fmt(m3_fs)} | m³_resanes = ${fmt(m3_res)} | m³_total = ${fmt(total)}`;
+      banner.style.display='block';
+      nums.textContent=`Arco: ${fmt(m3_arco)} | FS: ${fmt(m3_fs)} | Resanes: ${fmt(m3_res)} | Total: ${fmt(total)}`;
+
+      /* KPIs */
       const kpi=document.getElementById('kpi_quick'); kpi.style.display='grid';
       document.getElementById('kpi_arco').textContent=fmt(m3_arco);
       document.getElementById('kpi_fs').textContent=fmt(m3_fs);
       document.getElementById('kpi_res').textContent=fmt(m3_res);
       document.getElementById('kpi_total').textContent=fmt(total);
 
-      // TOTAL m³ grande
+      /* TOTAL grande */
       const tBig=document.getElementById('total_big'); const tVal=document.getElementById('total_big_value');
       tBig.style.display='flex'; tVal.textContent = fmt(total);
     }
@@ -304,12 +463,19 @@
       syncFSFromA();
     });
 
-    // Copia A/H hacia FS (registro)
-    function syncFSFromReg(){ const A = getNum('A_t_r'); const H = getNum('H_t_r'); document.getElementById('A_fs_view_r').value = A>0 ? A : ''; document.getElementById('H_fs_view_r').value = H>0 ? H : ''; }
-    ['A_t_r','H_t_r'].forEach(id=>{ const el=document.getElementById(id); el.addEventListener('input', syncFSFromReg); });
+    /* Copia A/H a FS (registro) */
+    function syncFSFromReg(){
+      const A = getNum('A_t_r'); const H = getNum('H_t_r');
+      document.getElementById('A_fs_view_r').value = A>0 ? fmt(A,2) : '';
+      document.getElementById('H_fs_view_r').value = H>0 ? fmt(H,2) : '';
+    }
+    ['A_t_r','H_t_r'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.addEventListener('input', syncFSFromReg);
+    });
     document.getElementById('fecha_r').value = new Date().toISOString().slice(0,10);
 
-    // Resanes en Registro
+    /* Resanes en Registro */
     document.getElementById('add_res_r').addEventListener('click', ()=> addResaneRow('res_list_r'));
     document.getElementById('clear_res_r').addEventListener('click', ()=>{ document.getElementById('res_list_r').innerHTML=''; });
 
@@ -338,8 +504,8 @@
       const resRows=Array.from(document.querySelectorAll('#res_list_r .res-row'));
       const resanes=resRows.map(r=>({
         lado: r.querySelector('.res-lado')?.value || 'N/A',
-        largo: Number(r.querySelector('.res-largo')?.value || 0),
-        alto: Number(r.querySelector('.res-alto')?.value || 0)
+        largo: Number((r.querySelector('.res-largo')?.value || '0').replace(',', '.')),
+        alto: Number((r.querySelector('.res-alto')?.value || '0').replace(',', '.'))
       }));
       const rec={
         ts:new Date().toISOString(),
@@ -347,13 +513,14 @@
         nivel:getStr('nivel_r')||'',
         labor:getStr('labor_r')||'',
         tipo:getStr('tipo_r')||'',
-        A_t:getNum('A_t_r'), H_t:getNum('H_t_r'), L_t:getNum('L_t_r'), k_t:getNum('k_t_r',0.9), R_t:getNum('R_t_r',11.5),
+        A_t:getNum('A_t_r'), H_t:getNum('H_t_r'), L_t:getNum('L_t_r'),
+        k_t:getNum('k_t_r',0.9), R_t:getNum('R_t_r',11.5),
         R_fs:getNum('R_fs_r',15.4), f_fs:getNum('f_fs_r',0.8),
         resanes:resanes,
-        m3_arco:Number(fmt(calc.m3_arco)), m3_fs:Number(fmt(calc.m3_fs)), m3_res:Number(fmt(calc.m3_res)), total:Number(fmt(calc.total))
+        m3_arco:Number(fmt(calc.m3_arco)), m3_fs:Number(fmt(calc.m3_fs)),
+        m3_res:Number(fmt(calc.m3_res)), total:Number(fmt(calc.total))
       };
-      const arr=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
-      arr.push(rec);
+      const arr=JSON.parse(localStorage.getItem(LS_KEY)||'[]'); arr.push(rec);
       localStorage.setItem(LS_KEY, JSON.stringify(arr));
       alert('Registro guardado.');
     });
@@ -374,7 +541,7 @@
       document.getElementById('fecha_r').value = new Date().toISOString().slice(0,10);
     });
 
-    // Resumen
+    /* Resumen */
     function renderTable(){
       const tbody=document.querySelector('#tbl tbody'); tbody.innerHTML='';
       const arr=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
@@ -400,16 +567,19 @@
     document.getElementById('btn_export').addEventListener('click', ()=>{
       const arr=JSON.parse(localStorage.getItem(LS_KEY)||'[]'); if(!arr.length){ alert('No hay registros.'); return; }
       const header=['FechaHora','Fecha','Nivel','Labor','Tipo','A','H','L','k','R','R_fs','f_fs','Resanes_n','m3_arco','m3_fs','m3_resanes','m3_total'];
-      const rows=arr.map(r=>[ (r.ts||'').toString().replace('T',' ').slice(0,19), r.fecha||'', r.nivel||'', r.labor||'', r.tipo||'', r.A_t, r.H_t, r.L_t, r.k_t, r.R_t, r.R_fs, r.f_fs, r.resanes?.length||0, r.m3_arco, r.m3_fs, r.m3_res, r.total ]);
+      const rows=arr.map(r=>[
+        (r.ts||'').toString().replace('T',' ').slice(0,19), r.fecha||'', r.nivel||'', r.labor||'', r.tipo||'',
+        r.A_t, r.H_t, r.L_t, r.k_t, r.R_t, r.R_fs, r.f_fs, r.resanes?.length||0, r.m3_arco, r.m3_fs, r.m3_res, r.total
+      ]);
       const csv=[header.join(','), ...rows.map(r=>r.join(','))].join('\n');
       const blob=new Blob([csv], {type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob);
       const a=document.createElement('a'); a.href=url; a.download='shotcrete_registros.csv'; a.click(); URL.revokeObjectURL(url);
     });
 
-    // ===== Registrar Service Worker =====
+    /* PWA: registro del Service Worker (ruta relativa para GitHub Pages de proyecto) */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('SW registrado:', reg.scope))
           .catch(err => console.error('SW error:', err));
       });
